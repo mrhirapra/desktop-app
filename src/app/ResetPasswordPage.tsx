@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useSearchParams, useNavigate } from "react-router-dom";
+import {useNavigate } from "react-router-dom";
 import { EyeIcon, EyeSlashIcon, ArrowLeftIcon } from "@heroicons/react/24/outline";
 
 function classNames(...classes: string[]) {
@@ -11,8 +11,6 @@ const passwordStrength = (pw: string) => {
 };
 
 const ResetPasswordPage = () => {
-    const [searchParams] = useSearchParams();
-    const token = searchParams.get("token");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
     const [showPassword, setShowPassword] = useState(false);

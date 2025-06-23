@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { LazyStore } from "@tauri-apps/plugin-store";
 import { ClockIcon } from "@heroicons/react/24/outline";
 import { useNavigate } from "react-router-dom";
+import { calculateTimeDifference, formatTimeDifference } from "../utils/helper";
 
 const store = new LazyStore("timer-state.dat");
 
@@ -19,14 +20,14 @@ interface TimerState {
 const ResumePrompt = ({ onClose }: { onClose: () => void }) => {
     const navigate = useNavigate();
     const [savedState, setSavedState] = useState<TimerState | null>(null);
+    const [timeDifference, setTimeDifference] = useState({ hours: 0, minutes: 0, seconds: 0 });
 
     useEffect(() => {
         const loadState = async () => {
             try {
                 const state = await store.get<TimerState>("timerState");
                 if (state && state.running) {
-                    const elapsed = Math.floor((Date.now() - state.timestamp) / 1000);
-                    state.seconds += elapsed;
+                    setTimeDifference(calculateTimeDifference(state.startTime, state.timestamp));
                     setSavedState(state);
                 } else {
                     onClose()
@@ -68,13 +69,6 @@ const ResumePrompt = ({ onClose }: { onClose: () => void }) => {
 
     if (!savedState) return null;
 
-    const formatTime = (s: number) => {
-        const h = Math.floor(s / 3600).toString().padStart(2, "0");
-        const m = Math.floor((s % 3600) / 60).toString().padStart(2, "0");
-        const sec = (s % 60).toString().padStart(2, "0");
-        return `${h}:${m}:${sec}`;
-    };
-
     return (
         <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
             <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 max-w-md w-full text-center">
@@ -85,7 +79,9 @@ const ResumePrompt = ({ onClose }: { onClose: () => void }) => {
                         <span>Project: {savedState.project.name}</span>
                     </div>
                     <div>Task: {savedState.taskName}</div>
-                    <div>Time Elapsed: <span className="font-semibold">{formatTime(savedState.seconds)}</span></div>
+                    <div>Time Elapsed: <span className="font-semibold">
+                        {formatTimeDifference(timeDifference)}
+                    </span></div>
                 </div>
                 <div className="flex justify-center gap-4">
                     <button
