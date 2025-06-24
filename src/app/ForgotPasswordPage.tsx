@@ -26,8 +26,8 @@ const ForgotPasswordPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300 px-4">
-            <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg relative">
+        <div className="min-h-screen flex items-center justify-center bg-[#858585] dark:bg-[#131313] transition-colors duration-300 px-4">
+            <div className="w-full max-w-md p-8 bg-white dark:bg-[#202020] rounded-xl shadow-lg relative">
                 <button
                     type="button"
                     onClick={() => navigate("/login")}
@@ -37,7 +37,7 @@ const ForgotPasswordPage = () => {
                     <ArrowLeftIcon className="h-5 w-5 mr-1" />
                     Back to Login
                 </button>
-                <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white text-center mt-2">Forgot Password</h2>
+                <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white text-center mt-8">Forgot Password</h2>
                 {success ? (
                     <div className="mb-4 text-green-700 bg-green-50 dark:bg-green-900 dark:text-green-200 rounded px-3 py-2 transition-all duration-300 text-center" role="status">
                         If this email exists, a reset link has been sent.

@@ -42,8 +42,8 @@ const LoginPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300 px-4">
-            <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg relative">
+        <div className="min-h-screen flex items-center justify-center bg-[#858585] dark:bg-[#131313] transition-colors duration-300 px-4">
+            <div className="w-full max-w-md p-8 bg-white dark:bg-[#202020] rounded-xl shadow-lg relative">
                 <h2 className="text-2xl font-bold mb-6 text-gray-900 dark:text-white text-center mt-2">Sign in to your account</h2>
                 {error && (
                     <div className="mb-4 text-red-600 bg-red-50 dark:bg-red-900 dark:text-red-200 rounded px-3 py-2 transition-all duration-300" role="alert">

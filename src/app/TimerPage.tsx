@@ -14,12 +14,15 @@ const TimerPage = () => {
 
     const { project, taskName, taskDesc, assigned, startTime } = location.state || {};
 
+    const unlistenRef = useRef<() => void>();
     const intervalRef = useRef<number | null>(null);
+
     const [windowInstance] = useState(() => Window.getCurrent());
 
     const [running, setRunning] = useState(true);
     const [showSummary, setShowSummary] = useState(false);
     const [timeDifference, setTimeDifference] = useState({ hours: 0, minutes: 0, seconds: 0 });
+    const [avatarError, setAvatarError] = useState(false);
 
     const saveTimerState = async () => {
         try {
@@ -48,29 +51,45 @@ const TimerPage = () => {
         }
     };
 
+
     useEffect(() => {
-        let unlistenPromise: Promise<() => void>;
+        let isMounted = true;
 
         const setupCloseProtection = async () => {
             try {
-                unlistenPromise = windowInstance.onCloseRequested(async (event) => {
-                    if (running) {
+                if (unlistenRef.current) {
+                    unlistenRef.current();
+                    unlistenRef.current = undefined;
+                }
+
+                if (running) {
+                    const unlisten = await windowInstance.onCloseRequested(async (event) => {
                         event.preventDefault();
                         await message('Timer is running. Please stop it before closing the app.', {
                             title: 'Close Blocked',
                             kind: 'warning'
                         });
+                    });
+
+                    if (isMounted) {
+                        unlistenRef.current = unlisten;
+                    } else {
+                        unlisten();
                     }
-                });
+                }
             } catch (error) {
                 console.error('Close protection setup failed:', error);
             }
-        };
+        }
 
-        setupCloseProtection();
+        setupCloseProtection()
 
         return () => {
-            unlistenPromise?.then(unlisten => unlisten());
+            isMounted = false;
+            if (unlistenRef.current) {
+                unlistenRef.current();
+                unlistenRef.current = undefined;
+            }
         };
     }, [running, windowInstance]);
 
@@ -96,7 +115,7 @@ const TimerPage = () => {
                 intervalRef.current = null;
             }
         };
-    }, [running, project, taskName, taskDesc, assigned, navigate]);
+    }, [running, project, taskName, taskDesc, assigned, navigate, startTime]);
 
     const handleStop = async () => {
         setRunning(false);
@@ -105,8 +124,9 @@ const TimerPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300 px-4 py-8">
-            <div className="w-full max-w-xl bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6 md:p-10 relative">
+        <div className="min-h-screen flex flex-col items-center justify-center bg-[#858585]
+        dark:bg-[#131313] transition-colors duration-300 px-4 py-8">
+            <div className="w-full max-w-xl bg-white dark:bg-[#202020] rounded-xl shadow-lg p-6 md:p-10 relative">
                 <h1 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 text-center mt-2">Task Timer</h1>
                 <div className="mb-6">
                     <div className="mb-2 text-lg font-semibold text-gray-700 dark:text-gray-200 flex items-center gap-2">
@@ -116,8 +136,22 @@ const TimerPage = () => {
                     <div className="mb-2 text-gray-600 dark:text-gray-300 text-sm">{taskDesc}</div>
                     <div className="flex items-center gap-2 text-sm text-gray-700 dark:text-gray-200">
                         <UserGroupIcon className="h-4 w-4" />
-                        {assigned && assigned.length > 0 ? (
-                            assigned.map((m: any) => m.name).join(", ")
+                        {assigned && assigned.name ? (
+                            <div className="flex items-center gap-2">
+                                <span className="inline-block h-7 w-7 rounded-full bg-blue-100 dark:bg-blue-700 text-blue-700 dark:text-blue-100 font-bold flex items-center justify-center overflow-hidden border border-blue-300 dark:border-blue-600">
+                                    {!avatarError && assigned.avatar ? (
+                                        <img
+                                            src={assigned.avatar}
+                                            alt={assigned.name}
+                                            className="h-7 w-7 rounded-full object-cover"
+                                            onError={() => setAvatarError(true)}
+                                        />
+                                    ) : (
+                                        assigned.name.charAt(0).toUpperCase()
+                                    )}
+                                </span>
+                                <span>{assigned.name}</span>
+                            </div>
                         ) : (
                             <span>No one assigned</span>
                         )}
@@ -138,8 +172,8 @@ const TimerPage = () => {
                     </button>
                 </div>
                 {showSummary && (
-                    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50 transition-all">
-                        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 max-w-sm w-full text-center">
+                    <div className="fixed inset-0 flex items-center justify-center bg-[#858585] dark:bg-[#131313] bg-opacity-40 z-50 transition-all">
+                        <div className="bg-white dark:bg-[#202020] rounded-xl shadow-xl p-8 max-w-sm w-full text-center">
                             <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Task Completed</h2>
                             <div className="mb-2 text-lg text-gray-700 dark:text-gray-200">
                                 Task completed in <span className="font-semibold">

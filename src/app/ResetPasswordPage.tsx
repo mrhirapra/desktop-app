@@ -39,8 +39,8 @@ const ResetPasswordPage = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors duration-300 px-4">
-            <div className="w-full max-w-md p-8 bg-white dark:bg-gray-800 rounded-xl shadow-lg relative">
+        <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-[#131313] transition-colors duration-300 px-4">
+            <div className="w-full max-w-md p-8 bg-white dark:bg-[#202020] rounded-xl shadow-lg relative">
                 <button
                     type="button"
                     onClick={() => navigate("/login")}

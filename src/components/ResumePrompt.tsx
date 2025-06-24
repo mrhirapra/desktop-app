@@ -70,8 +70,8 @@ const ResumePrompt = ({ onClose }: { onClose: () => void }) => {
     if (!savedState) return null;
 
     return (
-        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-            <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8 max-w-md w-full text-center">
+        <div className="fixed inset-0 flex items-center justify-center bg-[#858585] dark:bg-[#131313] bg-opacity-40 z-50">
+            <div className="bg-white dark:bg-[#202020] rounded-xl shadow-xl p-8 max-w-md w-full text-center">
                 <h2 className="text-xl font-bold mb-4 text-gray-900 dark:text-white">Resume Previous Task?</h2>
                 <div className="mb-4 text-gray-700 dark:text-gray-200">
                     <div className="flex items-center gap-2 mb-2">
