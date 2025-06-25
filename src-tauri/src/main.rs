@@ -12,11 +12,9 @@ fn check_internet() -> bool {
 
 #[tauri::command]
 async fn close_splashscreen(app: AppHandle) {
-    // Close splashscreen
     if let Some(splashscreen) = app.get_webview_window("splashscreen") {
         splashscreen.close().unwrap();
     }
-    // Show main window
     if let Some(main_window) = app.get_webview_window("main") {
         main_window.show().unwrap();
     }
@@ -28,11 +26,9 @@ fn main() {
             let splashscreen_window = app.get_webview_window("splashscreen").unwrap();
             let main_window = app.get_webview_window("main").unwrap();
             tauri::async_runtime::spawn(async move {
-                // Simulate heavy backend initialization
                 println!("Initializing backend...");
                 tokio::time::sleep(std::time::Duration::from_secs(3)).await;
                 println!("Backend initialization done.");
-                // Close splashscreen and show main window
                 splashscreen_window.close().unwrap();
                 main_window.show().unwrap();
             });
@@ -41,7 +37,7 @@ fn main() {
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![check_internet,close_splashscreen])
+        .invoke_handler(tauri::generate_handler![check_internet, close_splashscreen])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 
