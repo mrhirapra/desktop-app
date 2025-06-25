@@ -9,7 +9,6 @@ import { useEffect, useState } from "react";
 import { invoke } from "@tauri-apps/api/core";
 import { LazyStore } from "@tauri-apps/plugin-store";
 import ResumePrompt from "./components/ResumePrompt";
-import { Window } from '@tauri-apps/api/window'
 
 const store = new LazyStore("timer-state.dat");
 
@@ -19,10 +18,9 @@ function App() {
     const [showResumePrompt, setShowResumePrompt] = useState(false);
 
     useEffect(() => {
-        const mainWindow = Window.getCurrent();
-        if (mainWindow.label === 'main') {
-            mainWindow.emit('splashscreen-loaded');
-        }
+        setTimeout(() => {
+            invoke('close_splashscreen');
+        }, 3000);
     }, []);
 
     useEffect(() => {

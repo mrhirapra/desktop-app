@@ -20,19 +20,20 @@
                 "fullscreen": false,
                 "resizable": false,
                 "maximizable": false,
-                "devtools": true
+                "devtools": true,
+                "visible": false,
+                "label": "main"
             },
             {
-                "label": "splashscreen",
-                "title": "Splash Screen",
+                "title": "Splashscreen",
                 "width": 400,
-                "height": 600,
-                "decorations": false,
-                "transparent": true,
-                "visible": false,
+                "height": 200,
                 "center": true,
                 "resizable": false,
-                "skipTaskbar": true
+                "decorations": false,
+                "url": "splashscreen.html",
+                "label": "splashscreen",
+                "alwaysOnTop": true
             }
         ],
         "security": {

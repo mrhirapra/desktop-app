@@ -1,6 +1,7 @@
 // Prevents additional console window on Windows in release, DO NOT REMOVE!!
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
-use tauri::{Manager, Runtime, Window};
+
+use tauri::{AppHandle, Manager};
 
 #[tauri::command]
 fn check_internet() -> bool {
@@ -10,48 +11,39 @@ fn check_internet() -> bool {
 }
 
 #[tauri::command]
-async fn close_splashscreen<R: Runtime>(window: tauri::Window<R>) {
-    if let Some(splashscreen) = window.get_window("splashscreen") {
+async fn close_splashscreen(app: AppHandle) {
+    // Close splashscreen
+    if let Some(splashscreen) = app.get_webview_window("splashscreen") {
         splashscreen.close().unwrap();
     }
-    window.show().unwrap();
+    // Show main window
+    if let Some(main_window) = app.get_webview_window("main") {
+        main_window.show().unwrap();
+    }
 }
 
 fn main() {
     tauri::Builder::default()
         .setup(|app| {
-            let splashscreen_window = Window::builder(
-                app,
-                "splashscreen",
-                tauri::WindowUrl::App("index.html".into()),
-            )
-            .title("Splash Screen")
-            .inner_size(400.0, 600.0)
-            .decorations(false)
-            .transparent(true)
-            .visible(false)
-            .center()
-            .resizable(false)
-            .skip_taskbar(true)
-            .build()?;
-
-            // Rest of your code...
+            let splashscreen_window = app.get_webview_window("splashscreen").unwrap();
+            let main_window = app.get_webview_window("main").unwrap();
+            tauri::async_runtime::spawn(async move {
+                // Simulate heavy backend initialization
+                println!("Initializing backend...");
+                tokio::time::sleep(std::time::Duration::from_secs(3)).await;
+                println!("Backend initialization done.");
+                // Close splashscreen and show main window
+                splashscreen_window.close().unwrap();
+                main_window.show().unwrap();
+            });
             Ok(())
         })
         .plugin(tauri_plugin_store::Builder::new().build())
         .plugin(tauri_plugin_dialog::init())
         .plugin(tauri_plugin_opener::init())
-        .invoke_handler(tauri::generate_handler![close_splashscreen, check_internet])
+        .invoke_handler(tauri::generate_handler![check_internet,close_splashscreen])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
-
-    // tauri::Builder::default()
-    //     .plugin(tauri_plugin_store::Builder::new().build())
-    //     .plugin(tauri_plugin_dialog::init())
-    //     .plugin(tauri_plugin_opener::init())
-    //     .invoke_handler(tauri::generate_handler![check_internet,])
-    //     .run(tauri::generate_context!())
-    //     .expect("error while running tauri application");
 
     abox_pms_lib::run()
 }
