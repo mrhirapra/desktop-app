@@ -21,6 +21,18 @@
                 "resizable": false,
                 "maximizable": false,
                 "devtools": true
+            },
+            {
+                "label": "splashscreen",
+                "title": "Splash Screen",
+                "width": 400,
+                "height": 600,
+                "decorations": false,
+                "transparent": true,
+                "visible": false,
+                "center": true,
+                "resizable": false,
+                "skipTaskbar": true
             }
         ],
         "security": {
